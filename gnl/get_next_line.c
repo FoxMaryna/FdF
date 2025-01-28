@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "fdf.h"
+#include "get_next_line.h"
 
 char	*read_and_store(int fd, char *buffer);
 char	*extract_line(char *buffer);

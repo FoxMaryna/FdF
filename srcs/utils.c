@@ -6,23 +6,15 @@ void error_exit(char *message)
     exit(1);
 }
 
-int ft_word_count(char const *str, char c)
+int key_hook(int keycode, t_fdf *fdf)
 {
-    int count;
-    int i;
-
-    count = 0;
-    i = 0;
-    while (str[i])
+    if (keycode == ESCAPE)
     {
-        while (str[i] == c)
-            i++;
-        if (str[i] != c && str[i] != '\0')
-            count++;
-        while (str[i] != c && str[i] != '\0')
-            i++;
+        mlx_destroy_window(fdf->mlx, fdf->win);
+        exit(0);
     }
-    return (count);
+    // Добавьте здесь обработку других клавиш для управления камерой
+    return (0);
 }
 
 void ft_free_split(char **split)
@@ -38,17 +30,21 @@ void ft_free_split(char **split)
     free(split);
 }
 
-void free_map(t_map *map)
+int ft_word_count(const char *str, char c)
 {
-    int i;
+    int count = 0;
+    int in_word = 0;
 
-    i = 0;
-    while (i < map->height)
+    while (*str)
     {
-        free(map->points[i]);
-        i++;
+        if (*str != c && !in_word)
+        {
+            in_word = 1;
+            count++;
+        }
+        else if (*str == c)
+            in_word = 0;
+        str++;
     }
-    free(map->points);
-    free(map);
+    return count;
 }
-

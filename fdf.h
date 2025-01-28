@@ -1,20 +1,25 @@
 #ifndef FDF_H
 # define FDF_H
 
-# include "../minilibx-linux/mlx.h"
+# include "minilibx-linux/mlx.h"
+# include "libft.h"
+# include "gnl/get_next_line.h"
 # include <math.h>
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
-# include "../gnl/get_next_line.h"
 
 # define WIDTH 1200
 # define HEIGHT 800
 
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 42
-# endif
+# define ARROW_LEFT 65361
+# define ARROW_RIGHT 65363
+# define ARROW_DOWN 65364
+# define ARROW_UP 65362
+# define MINUS 45
+# define PLUS 61
+# define ESCAPE 65307
 
 typedef struct s_point
 {
@@ -29,48 +34,42 @@ typedef struct s_map
     t_point **points;
     int width;
     int height;
+    int z_max;
+    int z_min;
 } t_map;
+
+typedef struct s_camera
+{
+    float zoom;
+    float x_angle;
+    float y_angle;
+    float z_angle;
+    int x_offset;
+    int y_offset;
+} t_camera;
 
 typedef struct s_fdf
 {
     void *mlx;
     void *win;
+    void *img;
+    char *data_addr;
+    int bits_per_pixel;
+    int size_line;
+    int endian;
     t_map *map;
-    float zoom;
-    float angle;
-    int shift_x;
-    int shift_y;
-    int is_isometric;
+    t_camera *camera;
 } t_fdf;
 
-// Функции для работы с картой
 t_map *parse_map(char *filename);
-void free_map(t_map *map);
-
-// Функции для рисования
 void draw_map(t_fdf *fdf);
 void draw_line(t_fdf *fdf, t_point start, t_point end);
-
-// Функции для обработки событий
 int key_hook(int keycode, t_fdf *fdf);
-
-// Вспомогательные функции
 void error_exit(char *message);
-int ft_word_count(char const *str, char c);
+int get_color(int z, t_map *map);
+void init_camera(t_fdf *fdf);
+void apply_camera(t_fdf *fdf, t_point *p);
+int ft_word_count(const char *str, char c);
 void ft_free_split(char **split);
-void rotate_map(t_fdf *fdf, float angle);
-void change_color(t_fdf *fdf);
-
-// Строковые функции
-size_t ft_strlen(const char *s);
-char *ft_strdup(const char *s1);
-char *ft_strchr(const char *s, int c);
-char *ft_substr(char const *s, unsigned int start, size_t len);
-char *ft_strjoin(char *s1, char const *s);
-char *ft_strncpy(char *dest, const char *src, size_t n);
-
-// Функции для работы со строками и числами
-char **ft_split(char *str, char c);
-int ft_atoi(const char *str);
 
 #endif
