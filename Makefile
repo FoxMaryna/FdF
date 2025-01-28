@@ -6,9 +6,11 @@ INCLUDES = -I./includes -I./libft -I./minilibx-linux -I./gnl
 LIBS = -L./libft -lft -L./minilibx-linux -lmlx -lXext -lX11 -lm
 
 SRCS = srcs/main.c \
-       srcs/draw.c \
-       srcs/map.c \
-       srcs/utils.c
+		srcs/draw.c \
+		srcs/parse_map.c \
+		srcs/utils.c \
+		gnl/get_next_line.c \
+		gnl/get_next_line_utils.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -18,14 +20,10 @@ LIBFT = $(LIBFT_DIR)/libft.a
 MLX_DIR = ./minilibx-linux
 MLX = $(MLX_DIR)/libmlx.a
 
-GNL_DIR = ./gnl
-GNL_SRCS = $(GNL_DIR)/get_next_line.c $(GNL_DIR)/get_next_line_utils.c
-GNL_OBJS = $(GNL_SRCS:.c=.o)
-
 all: $(NAME)
 
-$(NAME): $(OBJS) $(GNL_OBJS) $(LIBFT) $(MLX)
-	$(CC) $(CFLAGS) $(OBJS) $(GNL_OBJS) $(LIBS) -o $(NAME)
+$(NAME): $(OBJS) $(LIBFT) $(MLX)	
+	$(CC) $(CFLAGS) $(OBJS) $(LIBS) -o $(NAME)
 
 %.o: %.c
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
@@ -37,7 +35,7 @@ $(MLX):
 	make -C $(MLX_DIR)
 
 clean:
-	rm -f $(OBJS) $(GNL_OBJS)
+	rm -f $(OBJS)
 	make -C $(LIBFT_DIR) clean
 	make -C $(MLX_DIR) clean
 

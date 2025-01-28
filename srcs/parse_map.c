@@ -81,6 +81,9 @@ t_map *parse_map(char *filename)
 
     map->height = get_height(filename);
     map->width = get_width(filename);
+    if (map->height <= 0 || map->width <= 0)
+        error_exit("Invalid map dimensions");
+
     map->z_min = INT_MAX;
     map->z_max = INT_MIN;
 
@@ -92,7 +95,13 @@ t_map *parse_map(char *filename)
     {
         map->points[i] = (t_point *)ft_calloc(map->width, sizeof(t_point));
         if (!map->points[i])
+        {
+            for (int j = 0; j < i; j++)
+                free(map->points[j]);
+            free(map->points);
+            free(map);
             error_exit("Memory allocation failed for map->points[i]");
+        }
     }
 
     fd = open(filename, O_RDONLY);

@@ -90,18 +90,3 @@ char	*upd_buffer(char *buffer)
 	free(buffer);
 	return (new_buffer);
 }
-
-/*int	main(int ac, char **av)
-{
-	int		fd;
-	char	*line;
-
-	fd = open(av[1], O_RDONLY);
-	(void)ac;
-	while ((line = get_next_line(fd)) != NULL)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	return 0;
-}*/
