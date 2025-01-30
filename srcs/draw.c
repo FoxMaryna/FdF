@@ -1,81 +1,121 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 15:31:56 by mkrainyk          #+#    #+#             */
+/*   Updated: 2025/01/30 16:13:49 by mkrainyk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../fdf.h"
 
-void isometric(float *x, float *y, int z)
+void	isometric(float *x, float *y, int z)
 {
-    float previous_x = *x;
-    float previous_y = *y;
-    *x = (previous_x - previous_y) * cos(0.523599);
-    *y = -z + (previous_x + previous_y) * sin(0.523599);
+	float	previous_x;
+	float	previous_y;
+
+	previous_x = *x;
+	previous_y = *y;
+	*x = (previous_x - previous_y) * cos(0.523599);
+	*y = -z + (previous_x + previous_y) * sin(0.523599);
 }
 
-void draw_line(t_fdf *fdf, t_point start, t_point end)
+void	draw_line(t_fdf *fdf, t_point start, t_point end)
 {
-    float dx = end.x - start.x;
-    float dy = end.y - start.y;
-    float max = fmax(fabs(dx), fabs(dy));
-    float x = start.x;
-    float y = start.y;
+	t_line	line;
+	int		color;
+	int		index;
+	int		i;
 
-    int i = 0;
-    while (i < max)
-    {
-        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
-        {
-            int color = get_color(start.z, fdf->map);
-            int index = ((int)y * fdf->size_line) + ((int)x * (fdf->bits_per_pixel / 8));
-            *(unsigned int*)(fdf->data_addr + index) = mlx_get_color_value(fdf->mlx, color);
-        }
-        x += dx / max;
-        y += dy / max;
-        i++;
-    }
+	line.dx = end.x - start.x;
+	line.dy = end.y - start.y;
+	line.max = fmax(fabs(line.dx), fabs(line.dy));
+	line.x = start.x;
+	line.y = start.y;
+	i = 0;
+	while (i < line.max)
+	{
+		if (line.x >= 0 && line.x < WIDTH && line.y >= 0 && line.y < HEIGHT)
+		{
+			color = get_color(start.z, fdf->map);
+			index = ((int)line.y * fdf->size_line)
+				+ ((int)line.x * (fdf->bits_per_pixel / 8));
+			*(unsigned int *)(fdf->data_addr + index)
+				= mlx_get_color_value(fdf->mlx, color);
+		}
+		line.x += line.dx / line.max;
+		line.y += line.dy / line.max;
+		i++;
+	}
 }
 
-void draw_map(t_fdf *fdf)
+static void	draw_horizontal_line(t_fdf *fdf, int x, int y, float scale)
 {
-    int x, y;
-    float scale = fmin(WIDTH / fdf->map->width / 2, HEIGHT / fdf->map->height / 2);
+	t_point	start;
+	t_point	end;
 
-    y = 0;
-    while (y < fdf->map->height)
-    {
-        x = 0;
-        while (x < fdf->map->width)
-        {
-            if (x < fdf->map->width - 1)
-            {
-                t_point start = fdf->map->points[y][x];
-                t_point end = fdf->map->points[y][x + 1];
-                start.x = x * scale;
-                start.y = y * scale;
-                end.x = (x + 1) * scale;
-                end.y = y * scale;
-                isometric(&start.x, &start.y, start.z * scale / 10);
-                isometric(&end.x, &end.y, end.z * scale / 10);
-                start.x += WIDTH / 2;
-                start.y += HEIGHT / 3;
-                end.x += WIDTH / 2;
-                end.y += HEIGHT / 3;
-                draw_line(fdf, start, end);
-            }
-            if (y < fdf->map->height - 1)
-            {
-                t_point start = fdf->map->points[y][x];
-                t_point end = fdf->map->points[y + 1][x];
-                start.x = x * scale;
-                start.y = y * scale;
-                end.x = x * scale;
-                end.y = (y + 1) * scale;
-                isometric(&start.x, &start.y, start.z * scale / 10);
-                isometric(&end.x, &end.y, end.z * scale / 10);
-                start.x += WIDTH / 2;
-                start.y += HEIGHT / 3;
-                end.x += WIDTH / 2;
-                end.y += HEIGHT / 3;
-                draw_line(fdf, start, end);
-            }
-            x++;
-        }
-        y++;
-    }
+	if (x < fdf->map->width - 1)
+	{
+		start = fdf->map->points[y][x];
+		end = fdf->map->points[y][x + 1];
+		start.x = x * scale;
+		start.y = y * scale;
+		end.x = (x + 1) * scale;
+		end.y = y * scale;
+		isometric(&start.x, &start.y, start.z * scale / 10);
+		isometric(&end.x, &end.y, end.z * scale / 10);
+		start.x += WIDTH / 2;
+		start.y += HEIGHT / 3;
+		end.x += WIDTH / 2;
+		end.y += HEIGHT / 3;
+		draw_line(fdf, start, end);
+	}
+}
+
+static void	draw_vertical_line(t_fdf *fdf, int x, int y, float scale)
+{
+	t_point	start;
+	t_point	end;
+
+	if (y < fdf->map->height - 1)
+	{
+		start = fdf->map->points[y][x];
+		end = fdf->map->points[y + 1][x];
+		start.x = x * scale;
+		start.y = y * scale;
+		end.x = x * scale;
+		end.y = (y + 1) * scale;
+		isometric(&start.x, &start.y, start.z * scale / 10);
+		isometric(&end.x, &end.y, end.z * scale / 10);
+		start.x += WIDTH / 2;
+		start.y += HEIGHT / 3;
+		end.x += WIDTH / 2;
+		end.y += HEIGHT / 3;
+		draw_line(fdf, start, end);
+	}
+}
+
+void	draw_map(t_fdf *fdf)
+{
+	int		x;
+	int		y;
+	float	scale;
+
+	scale = fmin(WIDTH / fdf->map->width / 2.5,
+			HEIGHT / fdf->map->height / 2.5);
+	y = 0;
+	while (y < fdf->map->height)
+	{
+		x = 0;
+		while (x < fdf->map->width)
+		{
+			draw_horizontal_line(fdf, x, y, scale);
+			draw_vertical_line(fdf, x, y, scale);
+			x++;
+		}
+		y++;
+	}
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strchr.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkrainyk <marvin@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/02 17:36:00 by mkrainyk          #+#    #+#             */
-/*   Updated: 2024/10/02 18:01:18 by mkrainyk         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:31:09 by mkrainyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,3 @@ char	*ft_strchr(const char *s, int c)
 		return ((char *)s);
 	return (0);
 }
- 

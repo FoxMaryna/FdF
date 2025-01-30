@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkrainyk <marvin@42lausanne.ch>            +#+  +:+       +#+        */
+/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/01 13:18:13 by mkrainyk          #+#    #+#             */
-/*   Updated: 2024/10/01 17:22:25 by mkrainyk         ###   ########.fr       */
+/*   Updated: 2025/01/30 15:31:10 by mkrainyk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,3 @@ void	*ft_memset(void *b, int c, size_t len)
 		a[i++] = (unsigned char)c;
 	return (b);
 }
-

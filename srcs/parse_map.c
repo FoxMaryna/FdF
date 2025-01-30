@@ -1,121 +1,88 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse_map.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 15:32:36 by mkrainyk          #+#    #+#             */
+/*   Updated: 2025/01/30 16:25:48 by mkrainyk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../fdf.h"
 
-static int get_height(char *filename)
+static t_map	*initialize_map(char *filename)
 {
-    int fd;
-    int height;
-    char *line;
+	t_map	*map;
 
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-        error_exit("Error opening file for height calculation");
-
-    height = 0;
-    while ((line = get_next_line(fd)) != NULL)
-    {
-        height++;
-        free(line);
-    }
-    close(fd);
-    return (height);
+	map = (t_map *)ft_calloc(1, sizeof(t_map));
+	if (!map)
+		error_exit("Memory allocation failed for map");
+	map->height = get_height(filename);
+	map->width = get_width(filename);
+	if (map->height <= 0 || map->width <= 0)
+		error_exit("Invalid map dimensions");
+	map->z_min = INT_MAX;
+	map->z_max = INT_MIN;
+	return (map);
 }
 
-static int get_width(char *filename)
+static void	allocate_points(t_map *map)
 {
-    int fd;
-    char *line;
-    int width;
+	int	i;
+	int	j;
 
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-        error_exit("Error opening file for width calculation");
-
-    line = get_next_line(fd);
-    if (line)
-    {
-        width = ft_word_count(line, ' ');
-        free(line);
-    }
-    else
-        width = 0;
-
-    close(fd);
-    return (width);
+	map->points = (t_point **)ft_calloc(map->height, sizeof(t_point *));
+	if (!map->points)
+		error_exit("Memory allocation failed for map->points");
+	i = 0;
+	while (i < map->height)
+	{
+		map->points[i] = (t_point *)ft_calloc(map->width, sizeof(t_point));
+		j = 0;
+		if (!map->points[i])
+		{
+			while (j < i)
+			{
+				free(map->points[j]);
+				j++;
+			}
+			free(map->points);
+			free(map);
+			error_exit("Memory allocation failed for map->points[i]");
+		}
+		i++;
+	}
 }
 
-static void fill_points(t_map *map, char *line, int y)
+static void	read_and_fill_map(t_map *map, char *filename)
 {
-    char **split;
-    int x;
+	int		fd;
+	char	*line;
+	int		y;
 
-    split = ft_split(line, ' ');
-    if (!split)
-        error_exit("Error splitting line");
-
-    x = 0;
-    while (split[x] && x < map->width)
-    {
-        map->points[y][x].x = x;
-        map->points[y][x].y = y;
-        map->points[y][x].z = ft_atoi(split[x]);
-        if (map->points[y][x].z > map->z_max)
-            map->z_max = map->points[y][x].z;
-        if (map->points[y][x].z < map->z_min)
-            map->z_min = map->points[y][x].z;
-        x++;
-    }
-
-    ft_free_split(split);
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		error_exit("Error opening file for map parsing");
+	y = 0;
+	line = get_next_line(fd);
+	while (line != NULL && y < map->height)
+	{
+		fill_points(map, line, y);
+		free(line);
+		y++;
+		line = get_next_line(fd);
+	}
+	close(fd);
 }
 
-t_map *parse_map(char *filename)
+t_map	*parse_map(char *filename)
 {
-    t_map *map;
-    int fd;
-    char *line;
-    int y;
+	t_map	*map;
 
-    map = (t_map *)ft_calloc(1, sizeof(t_map));
-    if (!map)
-        error_exit("Memory allocation failed for map");
-
-    map->height = get_height(filename);
-    map->width = get_width(filename);
-    if (map->height <= 0 || map->width <= 0)
-        error_exit("Invalid map dimensions");
-
-    map->z_min = INT_MAX;
-    map->z_max = INT_MIN;
-
-    map->points = (t_point **)ft_calloc(map->height, sizeof(t_point *));
-    if (!map->points)
-        error_exit("Memory allocation failed for map->points");
-
-    for (int i = 0; i < map->height; i++)
-    {
-        map->points[i] = (t_point *)ft_calloc(map->width, sizeof(t_point));
-        if (!map->points[i])
-        {
-            for (int j = 0; j < i; j++)
-                free(map->points[j]);
-            free(map->points);
-            free(map);
-            error_exit("Memory allocation failed for map->points[i]");
-        }
-    }
-
-    fd = open(filename, O_RDONLY);
-    if (fd < 0)
-        error_exit("Error opening file for map parsing");
-
-    y = 0;
-    while ((line = get_next_line(fd)) != NULL && y < map->height)
-    {
-        fill_points(map, line, y);
-        free(line);
-        y++;
-    }
-
-    close(fd);
-    return (map);
+	map = initialize_map(filename);
+	allocate_points(map);
+	read_and_fill_map(map, filename);
+	return (map);
 }

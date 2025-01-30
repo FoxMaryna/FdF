@@ -8,6 +8,7 @@ LIBS = -L./libft -lft -L./minilibx-linux -lmlx -lXext -lX11 -lm
 SRCS = srcs/main.c \
 		srcs/draw.c \
 		srcs/parse_map.c \
+		srcs/parse_map_utils.c \
 		srcs/utils.c \
 		gnl/get_next_line.c \
 		gnl/get_next_line_utils.c
