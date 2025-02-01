@@ -3,26 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maryna <maryna@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:55:49 by mkrainyk          #+#    #+#             */
-/*   Updated: 2025/01/30 16:39:11 by mkrainyk         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:36:51 by maryna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../fdf.h"
 
-void	ft_free_split(char **split)
+int	ft_word_count(const char *str, char c)
 {
-	int	i;
+	int	count;
+	int	in_word;
 
-	i = 0;
-	while (split[i])
+	count = 0;
+	in_word = 0;
+	while (*str)
 	{
-		free(split[i]);
-		i++;
+		if (*str != c && !in_word)
+		{
+			in_word = 1;
+			count++;
+		}
+		else if (*str == c)
+			in_word = 0;
+		str++;
 	}
-	free(split);
+	return (count);
 }
 
 int	get_height(char *filename)

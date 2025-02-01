@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maryna <maryna@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:31:51 by mkrainyk          #+#    #+#             */
-/*   Updated: 2025/01/30 16:14:56 by mkrainyk         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:48:09 by maryna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,29 +27,8 @@ int	key_hook(int keycode, t_fdf *fdf)
 
 int	close_window(t_fdf *fdf)
 {
-	mlx_destroy_window(fdf->mlx, fdf->win);
+	free_fdf(fdf);
 	exit(0);
-}
-
-int	ft_word_count(const char *str, char c)
-{
-	int	count;
-	int	in_word;
-
-	count = 0;
-	in_word = 0;
-	while (*str)
-	{
-		if (*str != c && !in_word)
-		{
-			in_word = 1;
-			count++;
-		}
-		else if (*str == c)
-			in_word = 0;
-		str++;
-	}
-	return (count);
 }
 
 int	get_color(int z, t_map *map)

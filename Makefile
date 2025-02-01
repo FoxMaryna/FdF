@@ -1,6 +1,6 @@
 NAME = fdf
 
-CC = gcc
+CC = cc
 CFLAGS = -Wall -Wextra -Werror
 INCLUDES = -I./includes -I./libft -I./minilibx-linux -I./gnl
 LIBS = -L./libft -lft -L./minilibx-linux -lmlx -lXext -lX11 -lm
@@ -10,6 +10,7 @@ SRCS = srcs/main.c \
 		srcs/parse_map.c \
 		srcs/parse_map_utils.c \
 		srcs/utils.c \
+		srcs/free_functions.c \
 		gnl/get_next_line.c \
 		gnl/get_next_line_utils.c
 

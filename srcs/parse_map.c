@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mkrainyk <mkrainyk@student.42.fr>          +#+  +:+       +#+        */
+/*   By: maryna <maryna@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 15:32:36 by mkrainyk          #+#    #+#             */
-/*   Updated: 2025/01/30 16:25:48 by mkrainyk         ###   ########.fr       */
+/*   Updated: 2025/02/01 22:54:04 by maryna           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,8 +67,13 @@ static void	read_and_fill_map(t_map *map, char *filename)
 		error_exit("Error opening file for map parsing");
 	y = 0;
 	line = get_next_line(fd);
-	while (line != NULL && y < map->height)
+	while (line)
 	{
+		if (y >= map->height)
+		{
+			free(line);
+			break ;
+		}
 		fill_points(map, line, y);
 		free(line);
 		y++;
